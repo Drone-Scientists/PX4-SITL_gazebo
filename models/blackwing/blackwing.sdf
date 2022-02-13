@@ -41,7 +41,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://blackwing/meshes/Full_Fuselage.stl</uri>
+            <uri>model://blackwing/meshes/Full_Fuselage_LowRes.stl</uri>
           </mesh>
         </geometry>
         <material>
@@ -125,23 +125,6 @@
           <izz>0.000167604</izz>
         </inertia>
       </inertial>
-      <!--
-      <collision name='propellor_pusher_collision'>
-        <pose>0 0 0 0 -0 0</pose>
-        <geometry>
-          <cylinder>
-            <radius>0.127</radius>
-            <length>0.007</length>
-          </cylinder>
-        </geometry>
-        <surface>
-          <contact>
-          </contact>
-          <friction>
-          </friction>
-        </surface>
-      </collision>
-      -->
       <visual name='propellor_pusher_visual'>
         <pose>0.004 0 0 0 -0 0</pose>
         <geometry>
@@ -189,14 +172,14 @@
           <iyz>0</iyz>
           <izz>1e-06</izz>
         </inertia>
-        <pose>0 0.3 0 0 -0 0</pose>
+        <pose>0 0.65 0 0 -0 0</pose>
       </inertial>
       <visual name='left_elevon_visual'>
         <pose>0.15 0 -0.04 1.5708 -0 -3.14159</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://blackwing/meshes/ElevonL.stl</uri>
+            <uri>model://blackwing/meshes/ElevonL_LowRes.stl</uri>
           </mesh>
         </geometry>
         <material>
@@ -218,14 +201,14 @@
           <iyz>0</iyz>
           <izz>1e-06</izz>
         </inertia>
-        <pose>0 -0.6 0 0 -0 0</pose>
+        <pose>0 -0.65 0 0 -0 0</pose>
       </inertial>
       <visual name='right_elevon_visual'>
         <pose>0.15 0 -0.04 1.5708 -0 -3.14159</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://blackwing/meshes/ElevonR.stl</uri>
+            <uri>model://blackwing/meshes/ElevonR_LowRes.stl</uri>
           </mesh>
         </geometry>
         <material>
@@ -253,7 +236,7 @@
     <joint name='left_elevon_joint' type='revolute'>
       <parent>base_link</parent>
       <child>left_elevon</child>
-      <pose>0.o2 0.0 0.0 0.02 0.11 0.37</pose>
+      <pose>-0.245 0.68 0.01 0.02 0.11 0.37</pose>
       <axis>
         <xyz>0 1 0</xyz>
         <limit>
@@ -274,7 +257,7 @@
     <joint name='right_elevon_joint' type='revolute'>
       <parent>base_link</parent>
       <child>right_elevon</child>
-      <pose>0.02 0.0 0.0 0.01 0.11 -0.37</pose>
+      <pose>-0.245 -0.68 0.01 0.02 0.11 -0.37</pose>
       <axis>
         <xyz>0 1 0</xyz>
         <limit>
