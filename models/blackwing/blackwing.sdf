@@ -2,6 +2,19 @@
 <sdf version='1.5'>
   <model name='blackwing'>
     <pose>0 0 0.246 0 0 0</pose>
+        
+    <!-- Model Load Order
+        Items must be loaded in this order, or else Gazebo has performance issues.
+
+            - Base Link
+            - Child Links
+            - Joints
+            - Sensor Plugins
+            - Mavlink Plugin
+            - IMU Plugin
+     -->
+
+    <!-- Base Fuselage Definition -->
     <link name='base_link'>
       <pose>0 0 0 0 0 0</pose>
       <inertial>
@@ -20,7 +33,7 @@
         <pose>-0.09 0 0.00 0 0 0</pose>
         <geometry>
           <box>
-	          <size>0.5 1.65 0.08</size>
+	        <size>0.5 1.65 0.08</size>
           </box>
         </geometry>
         <surface>
@@ -69,6 +82,8 @@
       <gravity>1</gravity>
       <self_collide>0</self_collide>
     </link>
+
+    <!-- Inertial Measurement Unit Link -->    
     <link name='blackwing/imu_link'>
       <pose>0 0 0 0 0 0</pose>
       <inertial>
@@ -102,6 +117,8 @@
         <use_parent_model_frame>1</use_parent_model_frame>
       </axis>
     </joint>
+
+    <!-- Include Gazebo Airspeed Sensor -->
     <include>
       <uri>model://airspeed</uri>
       <pose>0 0 0 0 0 0</pose>
@@ -111,6 +128,8 @@
       <child>airspeed::link</child>
       <parent>base_link</parent>
     </joint>
+
+    <!-- Propellor Definition -->
     <link name='propellor_pusher'>
       <pose>-0.17 0 0.015 0 1.57 0</pose>
       <inertial>
@@ -161,6 +180,7 @@
       </axis>
     </joint>
 
+    <!-- Control surface definitions -->
     <link name='left_elevon'>
       <inertial>
         <mass>1e-08</mass>
@@ -219,6 +239,11 @@
         </material>
      </visual>
     </link>
+
+    <!-- Note: This is virtual elevator. The aircraft doesn't have one, however 
+               this currently allows for proper aircraft flight behavior. The 
+               section will be removed once proper elevon mixing is implemented. 
+    -->
     <link name="elevator">
       <inertial>
         <mass>0.00000001</mass>
@@ -233,6 +258,8 @@
         <pose> -0.3 0 0 0.00 0 0.0</pose>
       </inertial>
     </link>
+
+    <!-- Joint definitions -->
     <joint name='left_elevon_joint' type='revolute'>
       <parent>base_link</parent>
       <child>left_elevon</child>
@@ -250,7 +277,7 @@
       </axis>
       <physics>
         <ode>
-	        <implicit_spring_damper>1</implicit_spring_damper>
+	      <implicit_spring_damper>1</implicit_spring_damper>
         </ode>
       </physics>
     </joint>
@@ -271,10 +298,12 @@
       </axis>
       <physics>
         <ode>
-	        <implicit_spring_damper>1</implicit_spring_damper>
+	      <implicit_spring_damper>1</implicit_spring_damper>
         </ode>
       </physics>
     </joint>
+
+    <!-- Remove this section along with elevator section -->
     <joint name='elevator_joint' type='revolute'>
       <parent>base_link</parent>
       <child>elevator</child>
@@ -296,6 +325,8 @@
         </ode>
       </physics>
     </joint>
+
+    <!-- Include Gazebo GPS Sensor -->
     <include>
       <uri>model://gps</uri>
       <pose>0 0 0 0 0 0</pose>
@@ -305,6 +336,9 @@
       <child>gps::link</child>
       <parent>base_link</parent>
     </joint>
+
+    <!-- Include Gazebo lifting surface plugin -->
+    <!-- Refine aerodynamic data to more closely match Flow5 model results -->
     <plugin name="left_wing_lift" filename="libLiftDragPlugin.so">
       <a0>0.05984281113</a0>
       <cla>4.752798721</cla>
@@ -327,6 +361,8 @@
       <robotNamespace></robotNamespace>
       <windSubTopic>world_wind</windSubTopic>
     </plugin>
+
+    <!-- Refine aerodynamic data to more closely match Flow5 model results -->
     <plugin name="right_wing_lift" filename="libLiftDragPlugin.so">
       <a0>0.05984281113</a0>
       <cla>4.752798721</cla>
@@ -349,6 +385,8 @@
       <robotNamespace></robotNamespace>
       <windSubTopic>world_wind</windSubTopic>
     </plugin>
+
+    <!-- Remove this section along with Elevator section -->
     <plugin name="elevator_lift" filename="libLiftDragPlugin.so">
       <a0>-0.2</a0>
       <cla>4.752798721</cla>
@@ -371,6 +409,8 @@
       <robotNamespace></robotNamespace>
       <windSubTopic>world_wind</windSubTopic>
     </plugin>
+
+    <!-- Find way to better model real motor characteristics -->
     <plugin name='pusher_motor_model' filename='libgazebo_motor_model.so'>
       <robotNamespace></robotNamespace>
       <jointName>propellor_pusher_joint</jointName>
@@ -388,9 +428,13 @@
       <motorSpeedPubTopic>/motor_speed/4</motorSpeedPubTopic>
       <rotorVelocitySlowdownSim>20</rotorVelocitySlowdownSim>
     </plugin>
+
+    <!-- Include Gazebo ground truth plugin -->
     <plugin name='groundtruth_plugin' filename='libgazebo_groundtruth_plugin.so'>
       <robotNamespace/>
     </plugin>
+
+    <!-- Include Gazebo magnetometer plugin -->
     <plugin name='magnetometer_plugin' filename='libgazebo_magnetometer_plugin.so'>
       <robotNamespace/>
       <pubRate>100</pubRate>
@@ -399,6 +443,8 @@
       <biasCorrelationTime>600</biasCorrelationTime>
       <magTopic>/mag</magTopic>
     </plugin>
+
+    <!-- Include Gazebo barometer plugin --> 
     <plugin name='barometer_plugin' filename='libgazebo_barometer_plugin.so'>
       <robotNamespace/>
       <pubRate>50</pubRate>
@@ -452,6 +498,9 @@
           <joint_control_type>position_kinematic</joint_control_type>
           <joint_name>right_elevon_joint</joint_name>
         </channel>
+        <!-- Not sure if this needs to be removed once elevtor is removed, 
+             may be needed for proper mixing 
+        -->
         <channel name="elevator">
           <input_index>7</input_index>
           <input_offset>0</input_offset>
@@ -463,6 +512,8 @@
         </channel>
       </control_channels>
     </plugin>
+
+    <!-- This plugin must be loaded last for proper simulator behavior. -->
     <plugin name='gazebo_imu_plugin' filename='libgazebo_imu_plugin.so'>
       <robotNamespace></robotNamespace>
       <linkName>blackwing/imu_link</linkName>
